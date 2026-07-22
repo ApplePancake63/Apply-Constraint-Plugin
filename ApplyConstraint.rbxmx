@@ -1,0 +1,181 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Folder" referent="RBXE198451F3A6D431DA90AB9636A0AC5D5">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<string name="Name">src</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+		</Properties>
+		<Item class="Script" referent="RBXF390D77AB0304FE1AFA14733F91D26E4">
+			<Properties>
+				<ProtectedString name="Source"><![CDATA[local bar = plugin:CreateToolbar("ApplyConstraint")
+
+local apply_button = bar:CreateButton(
+	"Apply",
+	"Apply Constraint by ianekifir",
+	"http://www.roblox.com/asset/?id=139437522"
+)
+local apply = require(script.Parent.Apply)
+apply_button.Click:Connect(apply)
+
+local to_scale_button = bar:CreateButton(
+	"To Scale",
+	"Apply Constraint by ianekifir",
+	"http://www.roblox.com/asset/?id=139437522"
+)
+local to_scale = require(script.Parent.ToScale)
+to_scale_button.Click:Connect(to_scale)]]></ProtectedString>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{55E5A606-9824-4226-86AE-9B88761A7DF4}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">PluginBar</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBXA8932DE8D84F46DA88EF8C42F93C66CB">
+			<Properties>
+				<Content name="LinkedSource"><null></null></Content>
+				<ProtectedString name="Source"><![CDATA[local selection = game:GetService("Selection")
+local frame_filter = {
+	"Frame",
+	"ScrollingFrame",
+	"ViewportFrame",
+	"CanvasGroup",
+	"TextLabel",
+	"TextButton",
+	"TextBox",
+	"ImageLabel",
+	"ImageButton"
+}
+local function add_parent(frame:Frame, rot_cache)
+	if table.find(frame_filter, frame.ClassName) then
+		table.insert(rot_cache, {frame=frame, rot=frame.Rotation})
+		frame.Rotation = 0
+		return add_parent(frame.Parent, rot_cache)
+	else
+		return rot_cache
+	end
+end
+return function()
+	local selected:{Instance} = selection:Get()
+	for _, v:Frame in selected do
+		if not table.find(frame_filter, v.ClassName) then warn(v, "is not a frame-like instance") continue end
+		local parent:ScrollingFrame = v.Parent
+		local parent_size = parent.AbsoluteSize
+		local x_view, y_view = parent_size.X, parent_size.Y
+		if parent:IsA("ScrollingFrame") then
+			local parent_parent:Frame = parent.Parent
+			local x_parent, y_parent = parent_parent.AbsoluteSize.X, parent_parent.AbsoluteSize.Y
+			x_view = math.max(parent.CanvasSize.X.Offset+parent.CanvasSize.X.Scale*x_parent, parent.AbsoluteSize.X)
+			y_view = math.max(parent.CanvasSize.Y.Offset+parent.CanvasSize.Y.Scale*y_parent, parent.AbsoluteSize.Y)
+		end
+		
+		local rot_cache = add_parent(v, {})
+		local x_size, y_size = v.AbsoluteSize.X, v.AbsoluteSize.Y
+		local x_scale, y_scale = x_size/x_view, y_size/y_view
+		v.Size = UDim2.fromScale(x_scale, y_scale)
+		print(v.AbsolutePosition.X, parent.AbsolutePosition.X, x_view)
+		local x_pos = (v.AbsolutePosition.X-parent.AbsolutePosition.X+x_size*v.AnchorPoint.X)/x_view
+		local y_pos = (v.AbsolutePosition.Y-parent.AbsolutePosition.Y+x_size*v.AnchorPoint.Y)/y_view
+		v.Position = UDim2.fromScale(x_pos, y_pos)
+		for _, v in rot_cache do
+			v.frame.Rotation = v.rot
+		end
+	end
+end]]></ProtectedString>
+				<string name="ScriptGuid">{7358CD8A-1D21-4CC7-9901-69968962DE2F}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">ToScale</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			</Properties>
+		</Item>
+		<Item class="ModuleScript" referent="RBXABE23C446A7B434CA320F146961178AE">
+			<Properties>
+				<Content name="LinkedSource"><null></null></Content>
+				<ProtectedString name="Source"><![CDATA[local selection = game:GetService("Selection")
+local frame_filter = {
+	"Frame",
+	"ScrollingFrame",
+	"ViewportFrame",
+	"CanvasGroup",
+	"TextLabel",
+	"TextButton",
+	"TextBox",
+	"ImageLabel",
+	"ImageButton"
+}
+local constraint_filter = {
+	"UIAspectRatioConstraint",
+	"UISizeConstraint",
+	"UIScale",
+	"UIPadding",
+	"UIListLayout",
+	"UIGridLayout",
+	"UIPageLayout",
+	"UITableLayout",
+}
+return function()
+	local selected:{Instance} = selection:Get()
+	for _, v in selected do
+		for _, k in v:GetDescendants() do
+			if not table.find(frame_filter, k.ClassName) or table.find(selected, k) then continue end
+			table.insert(selected, k)
+			print("k", k)
+		end
+		print("v", v)
+	end
+	local cached = {}
+	for _, v:Frame in selected do
+		print(v)
+		if not table.find(frame_filter, v.ClassName) then warn(v, "is not a frame-like instance") continue end
+		local cache = {frame=v}
+		
+		local parent:Frame = v.Parent
+		cache["rot"]=v.Rotation
+		
+		v.Rotation = 0
+		local parent_pos = parent.AbsolutePosition
+		cache["size"]=UDim2.fromOffset(v.AbsoluteSize.X, v.AbsoluteSize.Y)
+		cache["pos"]=UDim2.fromOffset(
+			v.AbsolutePosition.X-parent_pos.X+v.AbsoluteSize.X*v.AnchorPoint.X,
+			v.AbsolutePosition.Y-parent_pos.Y+v.AbsoluteSize.Y*v.AnchorPoint.Y
+		)
+		
+		table.insert(cached, cache)
+	end
+	for _, v:{frame:Frame, size:UDim2, pos:UDim2} in cached do
+		v.frame.Size = v.size
+		v.frame.Position = v.pos
+		v.frame.Rotation = v.rot
+		for _, k in v.frame:GetChildren() do
+			if not table.find(constraint_filter, k.ClassName) then print(k.ClassName) continue end
+			k:Destroy()
+		end
+	end
+end]]></ProtectedString>
+				<string name="ScriptGuid">{A0A4D8CB-7200-47C6-9097-B601AF658178}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<string name="Name">Apply</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			</Properties>
+		</Item>
+	</Item>
+	<SharedStrings>
+		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
+	</SharedStrings>
+</roblox>
