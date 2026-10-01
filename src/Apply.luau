@@ -26,13 +26,10 @@ return function()
 		for _, k in v:GetDescendants() do
 			if not table.find(frame_filter, k.ClassName) or table.find(selected, k) then continue end
 			table.insert(selected, k)
-			print("k", k)
 		end
-		print("v", v)
 	end
 	local cached = {}
 	for _, v:Frame in selected do
-		print(v)
 		if not table.find(frame_filter, v.ClassName) then warn(v, "is not a frame-like instance") continue end
 		local cache = {frame=v}
 		
@@ -54,7 +51,7 @@ return function()
 		v.frame.Position = v.pos
 		v.frame.Rotation = v.rot
 		for _, k in v.frame:GetChildren() do
-			if not table.find(constraint_filter, k.ClassName) then print(k.ClassName) continue end
+			if not table.find(constraint_filter, k.ClassName) continue end
 			k:Destroy()
 		end
 	end
