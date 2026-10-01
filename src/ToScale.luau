@@ -37,7 +37,6 @@ return function()
 		local x_size, y_size = v.AbsoluteSize.X, v.AbsoluteSize.Y
 		local x_scale, y_scale = x_size/x_view, y_size/y_view
 		v.Size = UDim2.fromScale(x_scale, y_scale)
-		print(v.AbsolutePosition.X, parent.AbsolutePosition.X, x_view)
 		local x_pos = (v.AbsolutePosition.X-parent.AbsolutePosition.X+x_size*v.AnchorPoint.X)/x_view
 		local y_pos = (v.AbsolutePosition.Y-parent.AbsolutePosition.Y+x_size*v.AnchorPoint.Y)/y_view
 		v.Position = UDim2.fromScale(x_pos, y_pos)
