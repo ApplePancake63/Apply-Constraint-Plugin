@@ -32,7 +32,7 @@ return function()
 			x_view = math.max(parent.CanvasSize.X.Offset+parent.CanvasSize.X.Scale*x_parent, parent.AbsoluteSize.X)
 			y_view = math.max(parent.CanvasSize.Y.Offset+parent.CanvasSize.Y.Scale*y_parent, parent.AbsoluteSize.Y)
 		end
-		
+
 		local rot_cache = add_parent(v, {})
 		local x_size, y_size = v.AbsoluteSize.X, v.AbsoluteSize.Y
 		local x_scale, y_scale = x_size/x_view, y_size/y_view
